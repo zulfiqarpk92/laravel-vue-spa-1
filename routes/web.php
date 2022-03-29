@@ -2,6 +2,7 @@
 
 use App\Models\Customer;
 use App\Models\Sale;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,4 +21,13 @@ Route::get('/test', function () {
     $customers = Sale::with('customer')->get()->toArray();
     dd($customers);
     return "Hello World";
+});
+
+Route::get('/mailtest', function () {
+  Mail::send([], [], function($message){
+    $message->to('mimranqureshi54@gmail.com')
+      ->subject('Mail Test')
+      ->setBody('Hello World');
+  });
+  return "Hello World";
 });
