@@ -2,7 +2,7 @@
   <div>
     <navbar />
     <v-main class="grey lighten-3" style="min-height: 100vh;">
-      <v-container>
+      <v-container class="admin-container" fluid>
         <v-row>
           <v-col>
             <child />
