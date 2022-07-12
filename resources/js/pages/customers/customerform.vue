@@ -144,7 +144,12 @@ import FormAlert from '../../components/FormAlert.vue'
 export default {
   components: { FormAlert },
   middleware: 'auth',
-  props: { customerId: Number },
+  props: {
+    customerId: {
+      type: Number,
+      default: 0
+    }
+  },
   data: function () {
     return {
       loading: false,
