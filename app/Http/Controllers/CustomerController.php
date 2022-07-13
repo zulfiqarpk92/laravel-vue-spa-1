@@ -53,7 +53,7 @@ class CustomerController extends Controller
     $customer->save();
     return response()->json([
       'status'  => 'success',
-      'message' => 'Customer record added sucessfully.',
+      'message' => 'Customer record added successfully.',
       'data'    => ['customer_id' => $customer->id]
     ]);
   }
@@ -70,7 +70,7 @@ class CustomerController extends Controller
     $customer->update($request->all());
     return response()->json([
       'status'  => 'success',
-      'message' => 'Customer record updated sucessfully.',
+      'message' => 'Customer record updated successfully.',
       'data'    => ['customer_id' => $customer->id]
     ]);
   }

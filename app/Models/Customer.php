@@ -13,9 +13,4 @@ class Customer extends Model
   protected $fillable = [
     'name', 'email', 'phone', 'address', 'city', 'province', 'comments',
   ];
-
-  public function person()
-  {
-    return $this->hasOne(Person::class, 'person_id', 'person_id');
-  }
 }
