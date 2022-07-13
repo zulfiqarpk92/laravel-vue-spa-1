@@ -17,15 +17,7 @@ class SaleController extends Controller
      */
     public function index()
     {
-        $sales = [];
-        foreach(Sale::with('customer')->orderBy('sale_id', 'desc')->get() as $sale){
-            $sales[] = [
-                'id'            => $sale->sale_id,
-                'sale_time'     => $sale->sale_time,
-                'customer_name' => $sale->customer ? $sale->customer->person->first_name . ' ' . $sale->customer->person->last_name : 'No Cust',
-            ];
-        }
-        return $sales;
+
     }
 
     /**

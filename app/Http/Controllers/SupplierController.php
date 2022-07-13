@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Suppliers;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
@@ -15,7 +15,7 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         //
-        // $supplier = Suppliers::all()->toArray();
+        // $supplier = Supplier::all()->toArray();
         // return array_reverse($supplier);
 
         $order_column = $request->get('orderBy');
@@ -23,7 +23,7 @@ class SupplierController extends Controller
             $order_column = 'id';
         }
         $q =  '%' . $request->input('q') . '%';
-        $supplier = Suppliers::where('name', 'LIKE', $q)
+        $supplier = Supplier::where('name', 'LIKE', $q)
             ->orWhere('email', 'LIKE', $q)
             ->orWhere('phone', 'LIKE', $q)
             ->orderBy($order_column, $request->boolean('orderDesc') ? 'desc' : 'asc')
@@ -51,7 +51,6 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-
             'name' => 'required',
             'email' => 'required',
             'phone' => 'required',
@@ -61,7 +60,7 @@ class SupplierController extends Controller
             'province' => 'required',
             'comments' => 'required',
         ]);
-        $supplier = new Suppliers($request->all());
+        $supplier = new Supplier($request->all());
         $supplier->save();
         return response()->json('Data Added successfully');
     }
@@ -74,8 +73,7 @@ class SupplierController extends Controller
      */
     public function show($id)
     {
-        //
-        $supplier = Suppliers::find($id);
+        $supplier = Supplier::find($id);
         return response()->json($supplier);
     }
 
@@ -99,11 +97,11 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $supplier = Suppliers::findOrFail($id);
+        $supplier = Supplier::findOrFail($id);
         $supplier->update($request->all());
         return response()->json([
             'status'  => 'success',
-            'message' => 'Customer record updated sucessfully.',
+            'message' => 'Supplier record updated successfully.',
             'data'    => ['customer_id' => $supplier->id]
         ]);
         //dd($id);
@@ -117,10 +115,10 @@ class SupplierController extends Controller
      */
     public function destroy($id)
     {
-        $supplier = Suppliers::find($id);
+        $supplier = Supplier::find($id);
         $supplier->delete();
         return response()->json([
-            'message' => "Customer $supplier->name deleted successfully."
+            'message' => "Supplier $supplier->name deleted successfully."
         ]);
     }
 }
