@@ -22,3 +22,7 @@
 .admin-container{
   padding: 1.5rem 3rem;
 }
+
+.v-application.theme--light .v-sheet.v-card:not(.v-sheet--outlined) {
+  box-shadow: 0 2px 10px 0 rgb(94 86 105 / 10%);
+}

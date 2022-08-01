@@ -18,7 +18,6 @@
           >
             <v-text-field
               v-model="form.name"
-              
               :error-messages="form.errors.get('name')"
               label="Name"
               required
@@ -34,7 +33,6 @@
           >
             <v-text-field
               v-model="form.email"
-              
               :error-messages="form.errors.get('email')"
               label="Email"
               required
@@ -114,7 +112,8 @@
           </v-col>
 
           <v-col cols="12">
-            <v-btn v-if="!employeeId"
+            <v-btn
+              v-if="!employeeId"
               color="primary"
               :loading="form.busy"
               :disabled="form.busy"
@@ -122,8 +121,9 @@
             >
               Submit
             </v-btn>
-            
-            <v-btn v-if="employeeId"
+
+            <v-btn
+              v-if="employeeId"
               color="primary"
               :loading="form.busy"
               :disabled="form.busy"
