@@ -104,7 +104,6 @@ class SupplierController extends Controller
             'message' => 'Supplier record updated successfully.',
             'data'    => ['customer_id' => $supplier->id]
         ]);
-        //dd($id);
     }
 
     /**
