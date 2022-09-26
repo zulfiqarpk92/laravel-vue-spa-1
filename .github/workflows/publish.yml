@@ -1,0 +1,32 @@
+# .github/workflows/publish.yml
+name: Vuetify Build
+
+on:
+  push:
+    branches:
+      - vuetify
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and Push
+    steps:
+      - name: git-checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install all dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build # The build command of your project
+
+      - name: Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout -B vuetify-build
+          git add -f public/
+          git commit -m "Build front-end assets"
+          git push -f origin vuetify-build
