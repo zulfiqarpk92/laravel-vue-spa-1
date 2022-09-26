@@ -9,7 +9,6 @@ mix
     extractStyles: true
   })
   .sass('resources/sass/app.scss', 'public/dist/css')
-
   .disableNotifications()
 
 if (mix.inProduction()) {
@@ -39,11 +38,11 @@ mix.webpackConfig({
 
 mix.then(() => {
   if (mix.inProduction()) {
-    process.nextTick(() => publishAseets())
+    process.nextTick(() => publishAssets())
   }
 })
 
-function publishAseets () {
+function publishAssets () {
   const publicDir = resolve(__dirname, './public')
 
   removeSync(join(publicDir, 'dist'))

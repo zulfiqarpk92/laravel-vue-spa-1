@@ -1,74 +1,47 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-white">
-    <div class="container">
-      <router-link :to="{ name: user ? 'home' : 'welcome' }" class="navbar-brand">
-        {{ appName }}
-      </router-link>
+  <div>
+    <v-app-bar
+      app
+      color="white"
+      flat
+    >
+      <v-container v-if="user" class="py-0 fill-height admin-container flex justify-space-between" fluid>
+        <v-avatar
+          class="mr-10"
+          color="blue darken-1"
+          size="48"
+        />
+        <v-btn
+          text
+          rounded
+          large
+          to="/home"
+          type="button"
+          class="text-capitalize text-base font-weight-regular px-6"
+        >
+          <v-icon left>
+            mdi-home
+          </v-icon>
+          Dashboard
+        </v-btn>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
-        <span class="navbar-toggler-icon" />
-      </button>
-
-      <div id="navbar" class="collapse navbar-collapse">
-        <ul class="navbar-nav">
-          <locale-dropdown />
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li> -->
-        </ul>
-
-        <ul class="navbar-nav ms-auto">
-          <!-- Authenticated -->
-          <li v-if="user" class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-dark"
-               href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-            >
-              <img :src="user.photo_url" class="rounded-circle profile-photo me-1">
-              {{ user.name }}
-            </a>
-            <div class="dropdown-menu">
-              <router-link :to="{ name: 'settings.profile' }" class="dropdown-item ps-3">
-                <fa icon="cog" fixed-width />
-                {{ $t('settings') }}
-              </router-link>
-
-              <div class="dropdown-divider" />
-              <a href="#" class="dropdown-item ps-3" @click.prevent="logout">
-                <fa icon="sign-out-alt" fixed-width />
-                {{ $t('logout') }}
-              </a>
-            </div>
-          </li>
-          <!-- Guest -->
-          <template v-else>
-            <li class="nav-item">
-              <router-link :to="{ name: 'login' }" class="nav-link" active-class="active">
-                {{ $t('login') }}
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link :to="{ name: 'register' }" class="nav-link" active-class="active">
-                {{ $t('register') }}
-              </router-link>
-            </li>
-          </template>
-        </ul>
-      </div>
-    </div>
-  </nav>
+        <user-menu-vue :user="user" @logout="logout" />
+      </v-container>
+    </v-app-bar>
+  </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import LocaleDropdown from './LocaleDropdown'
+import UserMenuVue from './UserMenu.vue'
 
 export default {
   components: {
-    LocaleDropdown
+    UserMenuVue
   },
 
   data: () => ({
-    appName: window.config.appName
+    isDropdownOpen: false
   }),
 
   computed: mapGetters({
@@ -82,6 +55,9 @@ export default {
 
       // Redirect to login.
       this.$router.push({ name: 'login' })
+    },
+    toggleDropdown () {
+      this.isDropdownOpen = !this.isDropdownOpen
     }
   }
 }
@@ -93,8 +69,10 @@ export default {
   height: 2rem;
   margin: -.375rem 0;
 }
-
-.container {
-  max-width: 1100px;
+.v-btn--active{
+  color:#2b81d6;
+}
+.user-profile-menu-content{
+  margin-top:50px;
 }
 </style>
