@@ -24,9 +24,13 @@ class ItemRequest extends FormRequest
   public function rules()
   {
     return [
-      'item_name' => 'required',
-      'category'  => 'required',
-      'item_type' => 'required',
+      'item_name'     => 'required',
+      'supplier_id'   => 'required',
+      'category_id'   => 'required',
+      'item_type'     => 'required',
+      'cost_price'    => 'required|numeric',
+      'sale_price'    => 'required|numeric',
+      'bulk_price'    => 'numeric',
     ];
   }
 }

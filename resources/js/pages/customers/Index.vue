@@ -41,6 +41,7 @@
         <v-icon
           small
           class="mr-2"
+          label="edit"
           @click="$router.push({ name : 'customers.edit', params: { customerId: item.id } })"
         >
           mdi-pencil
@@ -66,7 +67,7 @@ export default {
       options: {},
       headers: [
         { text: 'ID', value: 'id' },
-        { text: 'Customer Name', value: 'name' },
+        { text: 'Name', value: 'name' },
         { text: 'Email', value: 'email' },
         { text: 'Phone', value: 'phone' },
         { text: 'Created At', value: 'created_at' },

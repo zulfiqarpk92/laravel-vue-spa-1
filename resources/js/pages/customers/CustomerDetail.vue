@@ -1,53 +1,12 @@
 <template>
-  <v-row>
+  <v-row v-if="customerInfo">
     <v-col lg="4" md="5">
       <v-row>
         <v-col cols="12">
-          <v-card class="pt-10">
-            <v-card-title class="flex-column justify-center">
-              <v-avatar color="grey darken-1" size="120" rounded class="mb-4" />
-              <span class="mb-2">{{ customerInfo.name }}</span>
-              <v-chip>
-                Admin
-              </v-chip>
-              <v-card-text>
-                <h2 class="text-xl font-semibold mb-2">
-                  Customer Details
-                </h2>
-                <v-divider />
-                <v-list dense>
-                  <v-list-item class="px-0 mb-n2">
-                    <span class="font-weight-medium me-2">Name:</span>
-                    <span class="text--secondary">{{ customerInfo.name }}</span>
-                  </v-list-item>
-                  <v-list-item class="px-0 mb-n2">
-                    <span class="font-weight-medium me-2">Phone:</span>
-                    <span class="text--secondary">{{ customerInfo.phone }}</span>
-                  </v-list-item>
-                  <v-list-item class="px-0 mb-n2">
-                    <span class="font-weight-medium me-2">Email:</span>
-                    <span class="text--secondary">{{ customerInfo.email }}</span>
-                  </v-list-item>
-                  <v-list-item class="px-0 mb-n2">
-                    <span class="font-weight-medium me-2">Address</span>
-                    <span class="text--secondary">{{ customerInfo.address }} {{ customerInfo.city }} {{ customerInfo.province }}</span>
-                  </v-list-item>
-                  <v-list-item class="px-0 mb-n2">
-                    <span class="font-weight-medium me-2">Comments:</span>
-                    <span class="text--secondary">{{ customerInfo.comments }}</span>
-                  </v-list-item>
-                </v-list>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn color="primary" class="me-3">
-                  Edit
-                </v-btn>
-                <v-btn outlined color="red">
-                  Suspended
-                </v-btn>
-              </v-card-actions>
-            </v-card-title>
-          </v-card>
+          <customer-info
+            :customer-info="customerInfo"
+            @customerUpdated="loadData"
+          />
         </v-col>
       </v-row>
     </v-col>
@@ -57,102 +16,179 @@
         centered
         background-color="transparent"
       >
-        <v-tab>Quotations</v-tab>
         <v-tab>Invoices</v-tab>
         <v-tab>Payments</v-tab>
       </v-tabs>
       <v-tabs-items v-model="currentTab" class="mt-5 pa-1" style="background-color: transparent;">
         <v-tab-item>
           <v-card>
-            <v-card-title>
-              Quotations
+            <v-card-title class="justify-space-between">
+              <span>Invoices</span>
+              <v-btn color="primary" to="/sales/add">
+                Add Invoice
+              </v-btn>
             </v-card-title>
             <v-data-table
               :headers="headers"
-              :items="desserts"
+              :items="invoices"
               item-key="name"
               class="elevation-1"
-            />
+            >
+              <template #item.actions="{ item }">
+                <v-icon
+                  small
+                  class="mr-2"
+                  label="edit"
+                  @click="$router.push({ name : 'customers.edit', params: { customerId: item.id } })"
+                >
+                  mdi-pencil
+                </v-icon>
+                <v-icon
+                  small
+                  @click="deleteCustomer(item)"
+                >
+                  mdi-delete
+                </v-icon>
+              </template>
+            </v-data-table>
           </v-card>
         </v-tab-item>
         <v-tab-item>
           <v-card>
-            <v-card-title>
-              Invoices
+            <v-card-title class="justify-space-between">
+              <span>Payments</span>
+              <v-btn color="primary" @click="showPaymentModal = true">
+                Add Payment
+              </v-btn>
             </v-card-title>
             <v-data-table
-              :headers="headers"
-              :items="desserts"
-              item-key="name"
+              :headers="paymentsHeaders"
+              :items="payments"
+              item-key="id"
               class="elevation-1"
-            />
-          </v-card>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card>
-            <v-card-title>
-              Payments
-            </v-card-title>
-            <v-data-table
-              :headers="headers"
-              :items="desserts"
-              item-key="name"
-              class="elevation-1"
-            />
+            >
+              <template #item.actions="{ item }">
+                <v-icon
+                  small
+                  class="mr-2"
+                  label="edit"
+                  @click="$router.push({ name : 'customers.edit', params: { customerId: item.id } })"
+                >
+                  mdi-pencil
+                </v-icon>
+                <v-icon
+                  small
+                  @click="deletePayment(item)"
+                >
+                  mdi-delete
+                </v-icon>
+              </template>
+            </v-data-table>
           </v-card>
         </v-tab-item>
       </v-tabs-items>
     </v-col>
+    <v-dialog
+      v-model="showPaymentModal"
+      persistent
+      max-width="500px"
+    >
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Add Payment</span>
+        </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col
+              cols="12"
+              md="12"
+            >
+              <v-text-field
+                v-model="payment.description"
+                :error-messages="payment.errors.get('description')"
+                label="Description"
+                required
+              />
+            </v-col>
+            <v-col
+              cols="12"
+              md="12"
+            >
+              <v-text-field
+                v-model="payment.amount"
+                :error-messages="payment.errors.get('amount')"
+                label="Amount"
+                required
+              />
+            </v-col>
+          </v-row>
+          <small class="red--text">* indicates required field</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="showPaymentModal = false"
+          >
+            Close
+          </v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="addPayment"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 
 <script>
+import Form from 'vform'
+import CustomerInfo from './components/CustomerInfo.vue'
 export default {
+  components: { CustomerInfo },
   middleware: 'auth',
-  props: { customerId: Number },
+  props: { customerId: { type: String, default: '0' } },
   data () {
     return {
+      showPaymentModal: false,
+      payment: new Form({
+        user_id: this.customerId,
+        description: '',
+        amount: 0
+      }),
       currentTab: null,
       customerInfo: null,
       headers: [
         {
-          text: 'Dessert (100g serving)',
+          text: 'ID',
           align: 'start',
           sortable: false,
-          value: 'name'
+          value: 'id'
         },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Iron (%)', value: 'iron' }
+        { text: 'Date', value: 'sale_time' },
+        { text: 'Qty', value: 'total_amount' },
+        { text: 'Total', value: 'total_amount' },
+        { text: 'Actions', value: 'actions', sortable: false }
       ],
-      desserts: [
+      paymentsHeaders: [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          iron: '1%'
+          text: 'ID',
+          align: 'start',
+          sortable: false,
+          value: 'id'
         },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          iron: '16%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          iron: '6%'
-        }
-      ]
+        { text: 'Date', value: 'created_at' },
+        { text: 'Description', value: 'description' },
+        { text: 'Amount', value: 'amount' },
+        { text: 'Actions', value: 'actions', sortable: false }
+      ],
+      invoices: [],
+      payments: []
     }
   },
   mounted () {
@@ -164,15 +200,60 @@ export default {
     loadData: function () {
       this.loading = true
       this.$http
-        .get('/api/customers/' + this.customerId)
+        .get('/api/customers/' + this.customerId + '?include[]=sales&include[]=payments')
         .then(({ data }) => {
-          this.customerInfo = data
+          this.customerInfo = data.data
+          this.invoices = data.data.invoices
+          this.payments = data.data.payments
           this.loading = false
         })
         .catch(error => {
           console.log(error)
           this.loading = false
         })
+    },
+    addPayment: function () {
+      this.payment.post('/api/payments')
+        .then(() => {
+          this.loadData()
+          this.showPaymentModal = false
+        })
+    },
+    deleteSale: function (invoice) {
+      this.$confirm.fire({
+        icon: 'warning',
+        title: 'Delete Confirm',
+        text: 'Are you sure you want to delete this payment?',
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$http.delete(`/api/sales/${invoice.id}`).then(({ data }) => {
+            this.$store.dispatch('snackbar/showMessage', data.message)
+            this.loadData()
+          })
+        }
+      })
+    },
+    deletePayment: function (payment) {
+      this.$confirm.fire({
+        icon: 'warning',
+        title: 'Delete Confirm',
+        text: 'Are you sure you want to delete this payment?',
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$http.delete(`/api/payments/${payment.id}`).then(({ data }) => {
+            this.$store.dispatch('snackbar/showMessage', data.message)
+            this.loadData()
+          })
+        }
+      })
     }
   }
 }

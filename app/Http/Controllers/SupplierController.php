@@ -2,123 +2,97 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-        //
-        // $supplier = Supplier::all()->toArray();
-        // return array_reverse($supplier);
+  /**
+   * Display a listing of the resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function index(Request $request)
+  {
+    $suppliers = User::suppliers($request);
+    return ($suppliers);
+    //CustomerResource::collection;
+  }
 
-        $order_column = $request->get('orderBy');
-        if (!in_array($order_column, ['id', 'name', 'email', 'phone', 'created_at'])) {
-            $order_column = 'id';
-        }
-        $q =  '%' . $request->input('q') . '%';
-        $supplier = Supplier::where('name', 'LIKE', $q)
-            ->orWhere('email', 'LIKE', $q)
-            ->orWhere('phone', 'LIKE', $q)
-            ->orderBy($order_column, $request->boolean('orderDesc') ? 'desc' : 'asc')
-            ->paginate($request->get('per_page'));
-        return ($supplier);
-        //CustomerResource::collection;
-    }
+  /**
+   * Show the form for creating a new resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function create()
+  {
+    //
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function store(Request $request)
+  {
+    $this->validate($request, [
+      'name'      => 'required',
+      'email'     => 'required',
+      'phone'     => 'required',
+      'city'      => 'required',
+      'address'   => 'required',
+      'province'  => 'required',
+    ]);
+    $supplier = new User($request->all());
+    $supplier->is_supplier = true;
+    $supplier->save();
+    return response()->json('Supplier added successfully');
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required',
-            'gender' => 'required',
-            'city' => 'required',
-            'address' => 'required',
-            'province' => 'required',
-            'comments' => 'required',
-        ]);
-        $supplier = new Supplier($request->all());
-        $supplier->save();
-        return response()->json('Data Added successfully');
-    }
+  /**
+   * Display the specified resource.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function show($id)
+  {
+    $supplier = User::find($id);
+    return response()->json($supplier);
+  }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $supplier = Supplier::find($id);
-        return response()->json($supplier);
-    }
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function update(Request $request, $id)
+  {
+    $supplier = User::findOrFail($id);
+    $supplier->update($request->all());
+    return response()->json([
+      'status'  => 'success',
+      'message' => 'Supplier record updated successfully.',
+      'data'    => ['customer_id' => $supplier->id]
+    ]);
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $supplier = Supplier::findOrFail($id);
-        $supplier->update($request->all());
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Supplier record updated successfully.',
-            'data'    => ['customer_id' => $supplier->id]
-        ]);
-        //dd($id);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $supplier = Supplier::find($id);
-        $supplier->delete();
-        return response()->json([
-            'message' => "Supplier $supplier->name deleted successfully."
-        ]);
-    }
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function destroy($id)
+  {
+    $supplier = User::find($id);
+    $supplier->delete();
+    return response()->json([
+      'message' => "Supplier $supplier->name deleted successfully."
+    ]);
+  }
 }

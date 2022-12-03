@@ -18,6 +18,8 @@ class ItemResource extends JsonResource
         'id'          => $this->id,
         'item_name'   => $this->item_name,
         'category'    => $this->category,
+        'cost_price'  => $this->cost_price,
+        'sale_price'  => $this->sale_price,
         'item_type'   => $this->item_type == 1 ? 'Non-Stocked' : 'Stock',
         'created_at'  => $this->created_at ? $this->created_at->format('d/m/Y H:i') : '',
       ];

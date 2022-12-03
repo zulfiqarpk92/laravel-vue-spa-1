@@ -18,6 +18,7 @@ class CreateConfigsTable extends Migration
       $table->string('key', 50)->index();
       $table->string('value', 50);
       $table->timestamps();
+      $table->softDeletes();
     });
   }
 

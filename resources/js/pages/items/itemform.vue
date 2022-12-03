@@ -1,7 +1,11 @@
 <template>
   <v-card rounded="lg">
-    <v-card-title v-if="!itemId"> Add Item </v-card-title>
-    <v-card-title v-if="itemId"> Update Item </v-card-title>
+    <v-card-title v-if="!itemId">
+      Add Item
+    </v-card-title>
+    <v-card-title v-if="itemId">
+      Update Item: {{ form.item_name }}
+    </v-card-title>
     <v-card-text>
       <form-alert :form="form" />
       <v-form class="multi-col-validation">
@@ -20,8 +24,8 @@
 
           <v-col cols="12" md="6">
             <v-text-field
-              v-model="form.category"
-              :error-messages="form.errors.get('category')"
+              v-model="form.category_id"
+              :error-messages="form.errors.get('category_id')"
               label="Category"
               required
               outlined
@@ -42,9 +46,9 @@
           </v-col>
           <v-col cols="12" md="6">
             <v-text-field
-              v-model="form.company_name"
-              :error-messages="form.errors.get('company_name')"
-              label="Company Name"
+              v-model="form.supplier_id"
+              :error-messages="form.errors.get('supplier_id')"
+              label="Supplier"
               required
               outlined
               dense
@@ -142,95 +146,98 @@
         </v-row>
       </v-form>
     </v-card-text>
+    <v-card-text>
+      <pre>{{ form }}</pre>
+    </v-card-text>
   </v-card>
 </template>
 
 <script>
-import Form from "vform";
-import FormAlert from "../../components/FormAlert.vue";
+import Form from 'vform'
+import FormAlert from '../../components/FormAlert.vue'
 
 export default {
   components: { FormAlert },
-  middleware: "auth",
+  middleware: 'auth',
   props: { itemId: Number },
   data: function () {
     return {
       loading: false,
       form: new Form({
-        item_name: "",
-        category: "",
-        stock_type: "0",
-        barcode: "",
-        company_name: "",
-        cost_price: "",
-        sale_price: "",
-        bulk_price: "",
-        available_quantity: "",
-        description: "",
-      }),
-    };
+        item_name: '',
+        category_id: '',
+        item_type: '0',
+        barcode: '',
+        supplier_id: '',
+        cost_price: '',
+        sale_price: '',
+        bulk_price: '',
+        available_quantity: 0,
+        description: ''
+      })
+    }
   },
-  mounted() {
+  mounted () {
     if (this.itemId) {
-      this.loadData();
+      this.loadData()
     }
   },
   methods: {
     loadData: function () {
-      this.loading = true;
+      this.loading = true
       this.$http
-        .get("/api/items/" + this.itemId)
+        .get('/api/items/' + this.itemId)
         .then(({ data }) => {
           // eslint-disable-next-line camelcase
-          const { item_name, category, item_type, barcode, company_name, cost_price, sale_price, bulk_price, available_quantity, description } = data.data;
+          const { item_name, category_id, item_type, barcode, supplier_id, cost_price, sale_price, bulk_price, available_quantity, description } = data.data
           this.form = new Form({
             item_name,
-            category,
-            item_type,
+            category_id,
+            item_type: String(item_type),
             barcode,
-            company_name,
+            supplier_id,
             cost_price,
             sale_price,
             bulk_price,
             available_quantity,
-            description,
-          });
-          this.loading = false;
+            description
+          })
+          this.loading = false
         })
         .catch((error) => {
-          console.log(error);
-          this.loading = false;
-        });
+          console.log(error)
+          this.loading = false
+        })
     },
     submitForm: function () {
       if (this.itemId) {
         this.form
-          .put("/api/items/" + this.itemId)
+          .put('/api/items/' + this.itemId)
           .then(({ data }) => {
-            this.$store.dispatch("snackbar/showMessage", data.message);
-            this.$router.push({ name: "items" });
+            this.$store.dispatch('snackbar/showMessage', data.message)
+            this.$router.push({ name: 'items' })
           })
           .catch((error) => {
             if (error.response && error.response.data) {
-              this.$set(this.form, "errorMessage", error.response.data.message);
+              this.$set(this.form, 'errorMessage', error.response.data.message)
             }
-            console.log(error);
-          });
+            console.log(error)
+          })
       } else {
         this.form
-          .post("/api/items")
+          .post('/api/items')
           .then(({ data }) => {
-            this.$store.dispatch("snackbar/showMessage", data.message);
-            this.$router.push({ name: "items" });
+            this.$store.dispatch('snackbar/showMessage', data.message)
+            this.$router.push({ name: 'items' })
           })
           .catch((error) => {
             if (error.response && error.response.data) {
-              this.$set(this.form, "errorMessage", error.response.data.message);
+              this.$set(this.form, 'errorMessage', error.response.data.message)
             }
-            console.log(error);
-          });
+            console.log(error)
+          })
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>

@@ -114,7 +114,8 @@
           </v-col>
 
           <v-col cols="12">
-            <v-btn v-if="!supplierId"
+            <v-btn
+              v-if="!supplierId"
               color="primary"
               :loading="form.busy"
               :disabled="form.busy"
@@ -122,7 +123,8 @@
             >
               Submit
             </v-btn>
-            <v-btn v-if="supplierId"
+            <v-btn
+              v-if="supplierId"
               color="primary"
               :loading="form.busy"
               :disabled="form.busy"
@@ -168,7 +170,6 @@ export default {
         name: '',
         email: '',
         phone: '',
-        gender: 'male',
         city: '',
         address: '',
         province: '',

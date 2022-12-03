@@ -19,15 +19,15 @@ export default [
   { path: '/customers/edit/:customerId', name: 'customers.edit', component: page('customers/CustomerDetail.vue'), props: true },
 
   { path: '/employees', name: 'employees', component: page('employees/Index.vue') },
-  { path: '/employees/add', name: 'employees.add', component: page('employees/employeeform.vue') },
-  { path: '/employees/edit/:employeeId', name: 'employees.edit', component: page('employees/employeeform.vue'), props: true },
+  { path: '/employees/add', name: 'employees.add', component: page('employees/EmployeeForm.vue') },
+  { path: '/employees/edit/:employeeId', name: 'employees.edit', component: page('employees/EmployeeForm.vue'), props: true },
 
   { path: '/items', name: 'items', component: page('items/Index.vue') },
   { path: '/items/add', name: 'items.add', component: page('items/ItemForm.vue') },
   { path: '/items/edit/:itemId', name: 'items.edit', component: page('items/ItemForm.vue'), props: true },
 
-  { path: '/sales', name: 'sales', component: page('sales/index.vue') },
-  { path: '/sales/add', name: 'sales.add', component: page('sales/saleform.vue') },
+  { path: '/sales', name: 'sales', component: page('sales/Index.vue') },
+  { path: '/sales/add', name: 'sales.add', component: page('sales/SaleForm.vue') },
   { path: '/sales/edit/:itemId', name: 'sales.edit', component: page('sales/saleform.vue'), props: true },
   { path: '/sales/view/:invoiceId', name: 'sales.view', component: page('sales/view.vue'), props: true },
 

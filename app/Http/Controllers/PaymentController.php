@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaymentRequest;
 use App\Http\Requests\SaleRequest;
+use App\Http\Resources\PaymentResource;
 use App\Http\Resources\SaleResource;
+use App\Models\Payment;
 use App\Models\Sale;
 use Exception;
 use Illuminate\Http\Request;
 
-class SaleController extends Controller
+class PaymentController extends Controller
 {
   /**
    * Display a listing of the resource.
@@ -18,13 +21,13 @@ class SaleController extends Controller
   public function index(Request $request)
   {
     $order_column = $request->get('orderBy');
-    if (!in_array($order_column, ['id', 'name', 'email', 'phone', 'created_at'])) {
+    if (!in_array($order_column, ['id', 'description', 'amount', 'created_at'])) {
       $order_column = 'id';
     }
     $q =  '%' . $request->input('q') . '%';
-    $items = Sale::orderBy($order_column, $request->boolean('orderDesc') ? 'desc' : 'asc')
+    $payments = Payment::orderBy($order_column, $request->boolean('orderDesc') ? 'desc' : 'asc')
       ->paginate($request->get('per_page'));
-    return SaleResource::collection($items);
+    return PaymentResource::collection($payments);
   }
 
   /**
@@ -40,34 +43,19 @@ class SaleController extends Controller
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
+   * @param  App\Http\Requests\PaymentRequest $request
    * @return \Illuminate\Http\Response
    */
-  public function store(SaleRequest $request)
+  public function store(PaymentRequest $request)
   {
+    $payment = null;
     try {
-      $sale = new Sale();
-      $sale->customer_id = $request->input('customer_id') ?: 0;
-      $sale->employee_id = auth()->id();
-      $sale->sale_time = $request->input('sale_time') ?: Date('Y-m-d H:i:s');
-      $items = $request->input('invoiceItems');
-      if (!$items) {
-        return response()->json(['status' => 'error', 'data' => [], 'message' => 'One item required'], 422);
-      }
-      $sale->save();
-      $sale_items = [];
-      foreach ($items as $item) {
-        $sale_items[] = [
-          'item_id'    => $item['item_id'],
-          'quantity'   => $item['quantity'],
-          'cost_price' => $item['cost_price'],
-          'sale_price' => $item['sale_price'],
-        ];
-      }
-      $sale->items()->createMany($sale_items);
-      return response()->json(['status' => 'success', 'data' => ['sale_id' => $sale->id]]);
+      $payment = new Payment($request->all());
+      // $payment->employee_id = auth()->id();
+      $payment->save();
+      return response()->json(['status' => 'success', 'data' => ['payment_id' => $payment->id]]);
     } catch (Exception $ex) {
-      $sale->delete();
+      $payment && $payment->delete();
       return response()->json(['status' => 'error', 'data' => [], 'message' => $ex->getMessage()], 422);
     }
   }
@@ -75,12 +63,12 @@ class SaleController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  \App\Models\Sale  $sale
+   * @param  \App\Models\Payment $payment
    * @return \Illuminate\Http\Response
    */
-  public function show(Sale $sale)
+  public function show(Payment $payment)
   {
-    return new SaleResource($sale);
+    return new SaleResource($payment);
   }
 
   /**
@@ -109,16 +97,15 @@ class SaleController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  \App\Models\Sale  $sale
+   * @param  \App\Models\Payment $payment
    * @return \Illuminate\Http\Response
    */
-  public function destroy(Sale $sale)
+  public function destroy(Payment $payment)
   {
-    $sale->items()->delete();
-    $sale->delete();
+    $payment->delete();
     return response()->json([
       'status'  => 'success',
-      'message' => 'Invoice deleted successfully.',
+      'message' => 'Payment deleted successfully.',
       'data'    => []
     ]);
   }

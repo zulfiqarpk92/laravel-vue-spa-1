@@ -19,8 +19,14 @@ class CustomerResource extends JsonResource
       'name'        => $this->name,
       'email'       => $this->email,
       'phone'       => $this->phone,
-      'created_at'  => $this->created_at ? $this->created_at->format('d/m/Y H:i') : '',
+      'address'     => $this->address,
+      'city'        => $this->city,
+      'province'    => $this->province,
       'comments'    => $this->comments,
+      'role'        => $this->readableRole(),
+      'created_at'  => $this->created_at ? $this->created_at->format('d/m/Y H:i') : '',
+      'invoices'    => SaleResource::collection($this->sales),
+      'payments'    => PaymentResource::collection($this->payments),
     ];
   }
 }

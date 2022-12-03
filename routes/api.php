@@ -12,6 +12,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,7 @@ Route::group(['middleware' => 'auth:api'], function () {
   Route::get('items/search', [ItemController::class, 'search']);
   Route::resource('items', ItemController::class);
   Route::resource('sales', SaleController::class);
+  Route::resource('payments', PaymentController::class);
   Route::resource('customers', CustomerController::class);
   Route::resource('suppliers', SupplierController::class);
   Route::resource('employees', EmployeeController::class);

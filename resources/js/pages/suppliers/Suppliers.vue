@@ -66,7 +66,7 @@ export default {
       options: {},
       headers: [
         { text: 'ID', value: 'id' },
-        { text: 'Customer Name', value: 'name' },
+        { text: 'Name', value: 'name' },
         { text: 'Email', value: 'email' },
         { text: 'Phone', value: 'phone' },
         { text: 'Created At', value: 'created_at' },

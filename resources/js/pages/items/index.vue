@@ -47,7 +47,7 @@
         </v-icon>
         <v-icon
           small
-          @click="deleteCustomer(item)"
+          @click="deleteItem(item)"
         >
           mdi-delete
         </v-icon>
@@ -68,6 +68,7 @@ export default {
         { text: 'ID', value: 'id' },
         { text: 'Item Name', value: 'item_name' },
         { text: 'Category', value: 'category' },
+        { text: 'Price', value: 'sale_price' },
         { text: 'Item Type', value: 'item_type' },
         { text: 'Created At', value: 'created_at' },
         { text: 'Actions', value: 'actions', sortable: false }
@@ -107,7 +108,7 @@ export default {
           console.log(error)
         })
     },
-    deleteCustomer: function (item) {
+    deleteItem: function (item) {
       this.$confirm.fire({
         icon: 'warning',
         title: 'Delete Confirm',

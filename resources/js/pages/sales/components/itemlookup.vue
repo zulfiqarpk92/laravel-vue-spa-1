@@ -9,19 +9,13 @@
     flat
     hide-no-data
     hide-details
-    label="Search item"
+    label="Search Item"
   >
     <template #item="data">
-      <template v-if="typeof data.item !== 'object'">
-        <v-list-item-content v-text="data.item" />
-      </template>
-      <template v-else>
-        <v-list-item-content v-text="data.item" />
-        <v-list-item-content>
-          <v-list-item-title v-html="data.item.item_name" />
-          <v-list-item-subtitle v-html="data.item.category" />
-        </v-list-item-content>
-      </template>
+      <v-list-item-content @click="e => selectItem(data.item)">
+        <v-list-item-title v-html="data.item.item_name" />
+        <v-list-item-subtitle v-html="data.item.category" />
+      </v-list-item-content>
     </template>
   </v-autocomplete>
 </template>
@@ -44,26 +38,10 @@ export default {
       if (!val) {
         return
       }
-      const sItem = this.searchItems.find(x => x.item_id === this.searchItem)
-      if (sItem && sItem.name === val) {
-        console.log('select clicked')
-        this.searchItem = null
-        this.$emit('selected', sItem)
-        return
-      }
       clearTimeout(this.searchDebounce)
       this.searchDebounce = setTimeout(() => {
         val && val !== this.searchItem && this.querySelections(val)
       }, 350)
-    },
-    searchItem (itemId) {
-      if (itemId) {
-        return
-      }
-      const sItem = this.searchItems.find(x => x.item_id === itemId)
-      if (!sItem) {
-        alert('Item not found')
-      }
     }
   },
   methods: {
@@ -75,6 +53,11 @@ export default {
           this.searchItems = data
           this.searchLoading = false
         })
+    },
+    selectItem (item) {
+      this.$emit('selected', item)
+      this.searchItem = null
+      this.searchText = null
     }
   }
 }

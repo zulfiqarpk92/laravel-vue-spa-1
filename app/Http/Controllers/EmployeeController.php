@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CustomerResource;
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -14,18 +15,8 @@ class EmployeeController extends Controller
    */
   public function index(Request $request)
   {
-    $order_column = $request->get('orderBy');
-    if (!in_array($order_column, ['id', 'name', 'email', 'phone', 'created_at'])) {
-      $order_column = 'id';
-    }
-    $q =  '%' . $request->input('q') . '%';
-    $employee = User::where('name', 'LIKE', $q)
-      // ->orWhere('email', 'LIKE', $q)
-      // ->orWhere('phone', 'LIKE', $q)
-      ->orderBy($order_column, $request->boolean('orderDesc') ? 'desc' : 'asc')
-      ->paginate($request->get('per_page'));
-    return ($employee);
-    //CustomerResource::collection;
+    $employees = User::employees($request);
+    return CustomerResource::collection($employees);
   }
 
   /**
@@ -50,7 +41,6 @@ class EmployeeController extends Controller
       'name' => 'required',
       'email' => 'required',
       'phone' => 'required',
-      'gender' => 'required',
       'city' => 'required',
       'address' => 'required',
       'province' => 'required',
@@ -69,7 +59,8 @@ class EmployeeController extends Controller
    */
   public function show($id)
   {
-    //
+    $user = User::find($id);
+    return response()->json(['status' => 'success', 'data' => $user]);
   }
 
   /**
@@ -95,7 +86,7 @@ class EmployeeController extends Controller
     $employee->update($request->all());
     return response()->json([
       'status'  => 'success',
-      'message' => 'Customer record updated sucessfully.',
+      'message' => 'Customer record updated successfully.',
       'data'    => ['customer_id' => $employee->id]
     ]);
   }
@@ -111,7 +102,7 @@ class EmployeeController extends Controller
     $employee = User::find($id);
     $employee->delete();
     return response()->json([
-      'message' => "Employer $employee->name deleted successfully."
+      'message' => "Employee $employee->name deleted successfully."
     ]);
   }
 }

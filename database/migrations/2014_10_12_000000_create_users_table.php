@@ -26,14 +26,20 @@ class CreateUsersTable extends Migration
       $table->string('comments', 512)->nullable();
       $table->timestamp('email_verified_at')->nullable();
       $table->string('password')->nullable();
+      $table->string('role', 10);
+      $table->boolean('is_customer')->default(0);
+      $table->boolean('is_supplier')->default(0);
       $table->rememberToken();
       $table->timestamps();
+      $table->softDeletes();
     });
 
     DB::table('users')->insert([
       'name'      => 'Webmaster',
       'email'     => 'admin@example.com',
       'password'  => Hash::make('123456'),
+      'role'      => 'admin',
+      'created_at'=> date('Y-m-d H:i:s')
     ]);
   }
 

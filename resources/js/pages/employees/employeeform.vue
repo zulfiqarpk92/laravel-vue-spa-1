@@ -6,7 +6,7 @@
       Add Employee
     </v-card-title>
     <v-card-title v-if="employeeId">
-      Update Employee
+      Update Employee {{ form.name }}
     </v-card-title>
     <v-card-text>
       <form-alert :form="form" />
@@ -153,7 +153,7 @@ import FormAlert from '../../components/FormAlert.vue'
 export default {
   components: { FormAlert },
   middleware: 'auth',
-  props: { employeeId: Number },
+  props: ['employeeId'],
   data: function () {
     return {
       loading: false,
@@ -169,7 +169,6 @@ export default {
         name: '',
         email: '',
         phone: '',
-        gender: 'male',
         city: '',
         address: '',
         province: '',
@@ -188,7 +187,6 @@ export default {
       this.$http
         .get('/api/employees/' + this.employeeId)
         .then(({ data }) => {
-          // eslint-disable-next-line camelcase
           const {
             name,
             email,
@@ -197,7 +195,7 @@ export default {
             address,
             province,
             comments
-          } = data
+          } = data.data
           this.form = new Form({
             name,
             email,

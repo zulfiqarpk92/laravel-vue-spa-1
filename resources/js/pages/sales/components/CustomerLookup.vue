@@ -10,29 +10,24 @@
       flat
       hide-no-data
       hide-details
-      label="Search customer"
+      clearable
+      label="Search Customer"
     >
       <template #item="data">
-        <template v-if="typeof data.item !== 'object'">
-          <v-list-item-content v-text="data.item" />
-        </template>
-        <template v-else>
-          <v-list-item-content v-text="data.item" />
-          <v-list-item-content>
-            <v-list-item-title v-html="data.item.name" />
-            <v-list-item-subtitle v-html="data.item.email" />
-          </v-list-item-content>
-          <v-list-item-action v-if="data.item.person_id < 1">
-            <v-btn
-              icon
-              @click.stop="dialog = true"
-            >
-              <v-icon large color="green lighten-1">
-                mdi-plus
-              </v-icon>
-            </v-btn>
-          </v-list-item-action>
-        </template>
+        <v-list-item-content @click="$emit('selected', data.item)">
+          <v-list-item-title v-html="data.item.name" />
+          <v-list-item-subtitle v-html="data.item.email" />
+        </v-list-item-content>
+        <v-list-item-action v-if="data.item.id < 1">
+          <v-btn
+            icon
+            @click.stop="dialog = true"
+          >
+            <v-icon large color="green lighten-1">
+              mdi-plus
+            </v-icon>
+          </v-btn>
+        </v-list-item-action>
       </template>
     </v-autocomplete>
 
@@ -124,26 +119,6 @@
           <v-row>
             <v-col
               cols="12"
-              md="4"
-            >
-              <v-radio-group
-                v-model="customer.gender"
-                row
-              >
-                <v-radio
-                  label="Male"
-                  value="male"
-                />
-                <v-radio
-                  label="Female"
-                  value="female"
-                />
-              </v-radio-group>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              cols="12"
               md="12"
             >
               <v-textarea
@@ -202,7 +177,6 @@ export default {
         name: '',
         email: '',
         phone: '',
-        gender: 'male',
         city: '',
         address: '',
         province: '',
@@ -215,26 +189,10 @@ export default {
       if (!val) {
         return
       }
-      const sItem = this.searchItems.find(x => x.item_id === this.searchItem)
-      if (sItem && sItem.name === val) {
-        console.log('select clicked')
-        this.searchItem = null
-        this.$emit('selected', sItem)
-        return
-      }
       clearTimeout(this.searchDebounce)
       this.searchDebounce = setTimeout(() => {
         val && val !== this.searchItem && this.querySelections(val)
       }, 350)
-    },
-    searchItem (itemId) {
-      if (itemId) {
-        return 
-      }
-      const sItem = this.searchItems.find(x => x.item_id === itemId)
-      if (!sItem) {
-        alert('Item not found')
-      }
     }
   },
   methods: {
@@ -246,9 +204,6 @@ export default {
           this.searchItems = data
           this.searchLoading = false
         })
-    },
-    openModal () {
-      this.dialog = true
     },
     addCustomer () {
       this.customer

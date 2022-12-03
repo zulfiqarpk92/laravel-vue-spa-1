@@ -6,7 +6,7 @@ const { locale, locales } = window.config
 // state
 export const state = {
   locale: getLocale(locales, locale),
-  locales: locales
+  locales
 }
 
 // getters

@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import InvoiceItems from './components/invoiceitems.vue'
+import InvoiceItems from './components/InvoiceItems.vue'
 
 export default {
   components: { InvoiceItems },

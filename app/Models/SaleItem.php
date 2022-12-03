@@ -12,15 +12,20 @@ class SaleItem extends Model
   public $timestamps = false;
 
   protected $fillable = [
-      'item_id',
-      'description',
-      'quantity_purchased',
-      'item_cost_price',
-      'item_unit_price',
+    'item_id',
+    'description',
+    'quantity',
+    'cost_price',
+    'sale_price',
   ];
+
+  public function sale()
+  {
+    return $this->belongsTo(Sale::class);
+  }
 
   public function item()
   {
-    return $this->hasOne(Item::class, 'item_id', 'item_id');
+    return $this->belongsTo(Item::class);
   }
 }

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sale extends Model
 {
-  use HasFactory;
+  use HasFactory, SoftDeletes;
 
   const SALE_TYPE_POS = 0;
   const SALE_TYPE_INVOICE = 1;
@@ -28,9 +29,11 @@ class Sale extends Model
     'sale_type',
   ];
 
+  protected $dates = ['sale_time'];
+
   public function customer()
   {
-    return $this->hasOne(Customer::class);
+    return $this->belongsTo(User::class);
   }
 
   public function items()

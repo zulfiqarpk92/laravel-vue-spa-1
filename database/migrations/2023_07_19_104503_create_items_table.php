@@ -15,16 +15,16 @@ class CreateItemsTable extends Migration
   {
     Schema::create('items', function (Blueprint $table) {
       $table->id();
-      $table->string('item_name');
-      $table->string('category');
-      $table->string('item_type');
-      $table->string('barcode',20)->nullable();
-      $table->string('company_name');
-      $table->string('cost_price');
-      $table->string('sale_price');
-      $table->string('bulk_price');
-      $table->string('available_quantity');
-      $table->string('description');
+      $table->string('item_name')->index();
+      $table->unsignedInteger('category_id')->index();
+      $table->unsignedInteger('supplier_id')->index();
+      $table->tinyInteger('item_type');
+      $table->string('barcode', 20)->nullable();
+      $table->float('cost_price')->default(0);
+      $table->float('sale_price')->default(0);
+      $table->float('bulk_price')->default(0);
+      $table->integer('available_quantity')->default(0);
+      $table->text('description')->default('');
       $table->timestamps();
       $table->softDeletes();
     });

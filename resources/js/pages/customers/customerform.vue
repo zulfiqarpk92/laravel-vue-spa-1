@@ -165,7 +165,6 @@ export default {
         name: '',
         email: '',
         phone: '',
-        gender: 'male',
         city: '',
         address: '',
         province: '',

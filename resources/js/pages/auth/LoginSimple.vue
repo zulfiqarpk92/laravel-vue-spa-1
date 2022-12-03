@@ -17,11 +17,11 @@
               max-width="30px"
               alt="logo"
               contain
-              class="me-3 "
+              class="me-3"
             />
 
             <h2 class="text-2xl font-weight-semibold">
-              Xyz
+              OpenSource POS
             </h2>
           </router-link>
         </v-card-title>
@@ -88,8 +88,8 @@ export default {
 
   data: () => ({
     form: new Form({
-      email: '',
-      password: ''
+      email: 'admin@example.com',
+      password: '123456'
     }),
     config: window.config,
     remember: false

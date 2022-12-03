@@ -22,7 +22,6 @@ class ItemController extends Controller
     }
     $q =  '%' . $request->input('q') . '%';
     $items = Item::where('item_name', 'LIKE', $q)
-      ->orWhere('category', 'LIKE', $q)
       ->orWhere('item_type', 'LIKE', $q)
       ->orderBy($order_column, $request->boolean('orderDesc') ? 'desc' : 'asc')
       ->paginate($request->get('per_page'));
@@ -57,11 +56,13 @@ class ItemController extends Controller
    */
   public function store(ItemRequest $request)
   {
-    $item = new Item($request->all());
+    $attrs = $request->all();
+    $attrs['description'] = $attrs['description'] ?: '';
+    $item = new Item($attrs);
     $item->save();
     return response()->json([
       'status'  => 'success',
-      'message' => 'Item record added sucessfully.',
+      'message' => 'Item record added successfully.',
       'data'    => ['item_id' => $item->id]
     ]);
   }
@@ -102,7 +103,7 @@ class ItemController extends Controller
 
     return response()->json([
       'status'  => 'success',
-      'message' => 'Item record updated sucessfully.',
+      'message' => 'Item record updated successfully.',
       'data'    => ['item_id' => $item->id]
     ]);
   }

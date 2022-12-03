@@ -4,23 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\CustomerResource;
-use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
   public function index(Request $request)
   {
-    $order_column = $request->get('orderBy');
-    if (!in_array($order_column, ['id', 'name', 'email', 'phone', 'created_at'])) {
-      $order_column = 'id';
-    }
-    $q =  '%' . $request->input('q') . '%';
-    $customers = Customer::where('name', 'LIKE', $q)
-      ->orWhere('email', 'LIKE', $q)
-      ->orWhere('phone', 'LIKE', $q)
-      ->orderBy($order_column, $request->boolean('orderDesc') ? 'desc' : 'asc')
-      ->paginate($request->get('per_page'));
+    $customers = User::customers($request);
     return CustomerResource::collection($customers);
   }
 
@@ -31,12 +22,7 @@ class CustomerController extends Controller
    */
   public function search(Request $request)
   {
-    $q =  '%' . $request->input('q') . '%';
-    $items = Customer::select(['id', 'name'])
-      ->where('name', 'LIKE', $q)
-      ->orWhere('email', 'LIKE', $q)
-      ->orWhere('phone', 'LIKE', $q)
-      ->get();
+    $items = User::search($request->input('q'), 'customer');
     if ($items->IsEmpty()) {
       $items = [[
         'id'    => 0,
@@ -49,7 +35,8 @@ class CustomerController extends Controller
 
   public function store(CustomerRequest $request)
   {
-    $customer = new Customer($request->validated());
+    $customer = new User($request->validated());
+    $customer->is_customer = true;
     $customer->save();
     return response()->json([
       'status'  => 'success',
@@ -58,15 +45,16 @@ class CustomerController extends Controller
     ]);
   }
 
-  public function show($id)
+  public function show($id, Request $request)
   {
-    $customer = Customer::find($id);
-    return response()->json($customer);
+    $include = $request->input('include');
+    $customer = User::when($include, fn($query) => $query->with($include))->find($id);
+    return new CustomerResource($customer);
   }
 
   public function update($id, CustomerRequest $request)
   {
-    $customer = Customer::findOrFail($id);
+    $customer = User::findOrFail($id);
     $customer->update($request->all());
     return response()->json([
       'status'  => 'success',
@@ -77,7 +65,7 @@ class CustomerController extends Controller
 
   public function destroy($id)
   {
-    $customer = Customer::find($id);
+    $customer = User::find($id);
     $customer->delete();
     return response()->json([
       'message' => "Customer $customer->name deleted successfully."

@@ -1,7 +1,7 @@
 <template>
   <v-main class="grey lighten-3">
     <!-- <v-container> -->
-      <child />
+    <child />
     <!-- </v-container> -->
   </v-main>
 </template>
