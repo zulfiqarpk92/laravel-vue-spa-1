@@ -1,4 +1,3 @@
-
 <template>
   <v-menu
     offset-y
@@ -52,14 +51,14 @@
           <span class="text--primary font-weight-semibold mb-n1">
             {{ user.name }}
           </span>
-          <small class="text--disabled text-capitalize">Admin</small>
+          <small class="text--disabled text-capitalize">{{ user.role }}</small>
         </div>
       </div>
 
       <v-divider />
 
       <!-- Profile -->
-      <v-list-item link>
+      <v-list-item link :to="{ name : 'employees.edit', params: { employeeId: user.id } }">
         <v-list-item-icon class="me-2">
           <v-icon size="22">
             mdi-account-outline
@@ -71,7 +70,7 @@
       </v-list-item>
 
       <!-- Settings -->
-      <v-list-item link>
+      <v-list-item link :to="{ name : 'settings.profile', params: { employeeId: user.id } }">
         <v-list-item-icon class="me-2">
           <v-icon size="22">
             mdi-cog-outline

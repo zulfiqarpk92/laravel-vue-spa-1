@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\User;
+use App\Models\Sale;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +19,18 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/welcome', function () {
 //     return view('welcome');
 // });
+
+Route::get('/test', function () {
+  $customers = User::with('sales')->get()->toArray();
+  dd($customers);
+  return "Hello World";
+});
+
+Route::get('/mailtest', function () {
+  Mail::send([], [], function ($message) {
+    $message->to('test@proton.com')
+      ->subject('Mail Test')
+      ->setBody('Hello World');
+  });
+  return "Hello World";
+});

@@ -27,7 +27,7 @@ Vue.filter('currency', (value) => {
   })
   return formatter.format(value)
 })
-Vue.filter('shownumber', (value) => {
+Vue.filter('showNumber', (value) => {
   if (typeof value !== 'number') {
     return value
   }

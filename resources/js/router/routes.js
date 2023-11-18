@@ -1,5 +1,5 @@
 function page (path) {
-  return () => import(/* webpackChunkName: '' */ `~/pages/${path}`).then(m => m.default || m)
+  return () => import(`~/pages/${path}`).then(m => m.default || m)
 }
 
 export default [
@@ -13,6 +13,40 @@ export default [
   { path: '/email/resend', name: 'verification.resend', component: page('auth/verification/resend.vue') },
 
   { path: '/home', name: 'home', component: page('home.vue') },
+
+  { path: '/customers', name: 'customers', component: page('customers/Index.vue') },
+  { path: '/customers/add', name: 'customers.add', component: page('customers/customerform.vue') },
+  { path: '/customers/edit/:customerId', name: 'customers.edit', component: page('customers/CustomerDetail.vue'), props: true },
+  { path: '/customers/ledger/:customerId', name: 'customers.ledger', component: page('customers/Ledger.vue'), props: true },
+
+  { path: '/suppliers', name: 'suppliers', component: page('suppliers/index.vue') },
+  { path: '/suppliers/add', name: 'suppliers.add', component: page('suppliers/supplierform.vue') },
+  { path: '/suppliers/edit/:supplierId', name: 'suppliers.edit', component: page('suppliers/supplierform.vue'), props: true },
+
+  { path: '/employees', name: 'employees', component: page('employees/Index.vue') },
+  { path: '/employees/add', name: 'employees.add', component: page('employees/employeeform.vue') },
+  { path: '/employees/edit/:employeeId', name: 'employees.edit', component: page('employees/employeeform.vue'), props: true },
+
+  { path: '/items', name: 'items', component: page('items/index.vue') },
+  { path: '/items/add', name: 'items.add', component: page('items/itemform.vue') },
+  { path: '/items/edit/:itemId', name: 'items.edit', component: page('items/itemform.vue'), props: true },
+
+  { path: '/sales', name: 'sales', component: page('sales/index.vue') },
+  { path: '/sales/add1', name: 'sales.add1', component: page('sales/saleform.vue') },
+  { path: '/sales/add', name: 'sales.add', component: page('sales/AddSale.vue') },
+  { path: '/sales/edit/:saleId', name: 'sales.edit', component: page('sales/EditSale.vue'), props: true },
+  { path: '/sales/view/:saleId', name: 'sales.view', component: page('sales/view.vue'), props: true },
+
+  { path: '/purchases', name: 'purchases', component: page('purchases/Index.vue') },
+  { path: '/purchases/add', name: 'purchases.add', component: page('purchases/AddPurchase.vue') },
+  { path: '/purchases/edit/:purchaseId', name: 'purchases.edit', component: page('purchases/EditPurchase.vue'), props: true },
+  { path: '/purchases/view/:purchaseId', name: 'purchases.view', component: page('purchases/View.vue'), props: true },
+
+  { path: '/payments', name: 'payments', component: page('payments/index.vue') },
+  { path: '/payments/add', name: 'payments.add', component: page('payments/AddSale.vue') },
+  { path: '/payments/edit/:paymentId', name: 'payments.edit', component: page('payments/EditSale.vue'), props: true },
+  { path: '/payments/view/:paymentId', name: 'payments.view', component: page('payments/view.vue'), props: true },
+
   {
     path: '/settings',
     component: page('settings/index.vue'),
